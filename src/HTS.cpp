@@ -73,7 +73,9 @@ void HTS221Class::end()
 float HTS221Class::readTemperature(int units)
 {
   // Wait for ONE_SHOT bit to be cleared by the hardware
+#if !defined(ARDUINO_EDGE_CONTROL)
   while (i2cRead(HTS221_CTRL2_REG) & 0x01);
+#endif  
 
   // trigger one shot
   i2cWrite(HTS221_CTRL2_REG, 0x01);
@@ -96,7 +98,9 @@ float HTS221Class::readTemperature(int units)
 float HTS221Class::readHumidity()
 {
   // Wait for ONE_SHOT bit to be cleared by the hardware
+#if !defined(ARDUINO_EDGE_CONTROL)
   while (i2cRead(HTS221_CTRL2_REG) & 0x01);
+#endif
 
   // trigger one shot
   i2cWrite(HTS221_CTRL2_REG, 0x01);
@@ -163,7 +167,7 @@ void HTS221Class::readHTS221Calibration()
   _hts221TemperatureZero = (t0degC / 8.0) - _hts221TemperatureSlope * t0Out;
 }
 
-#ifdef ARDUINO_ARDUINO_NANO33BLE
+#if defined(ARDUINO_ARDUINO_NANO33BLE) || defined(ARDUINO_EDGE_CONTROL)
 HTS221Class HTS(Wire1);
 #else
 HTS221Class HTS(Wire);
